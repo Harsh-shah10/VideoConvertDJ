@@ -28,28 +28,28 @@ class UserLoginAPIView(View):
         try:
             data = json.loads(request.body)
         except json.JSONDecodeError:
-            return JsonResponse({'status': 'fail', 'message': 'Invalid JSON data in request body'}, status=400)
+            return JsonResponse({'status': 'fail', 'message': 'Invalid JSON data in request body', 'status_code': 400}, status=400)
 
         email = data.get('email')
         password = data.get('password')
         if not email or not password:
-            return JsonResponse({'status': 'fail', 'message': 'Email and password are required'}, status=400)
+            return JsonResponse({'status': 'fail', 'message': 'Email and password are required', 'status_code': 400}, status=400)
 
         try:
             user = User.objects.get(email=email)
             if not check_password(password, user.password):
-                return JsonResponse({'status': 'fail', 'message': 'Incorrect Password'}, status=400)
+                return JsonResponse({'status': 'fail', 'message': 'Incorrect Password', 'status_code': 400}, status=400)
             
             token = generate_login_token(user.id)
             if token:
-                return JsonResponse({'status': 'success', 'message': 'Logged In', 'token': token}, status=200)
+                return JsonResponse({'status': 'success', 'message': 'Logged In', 'token': token, 'status_code': 200}, status=200)
             else:
-                return JsonResponse({'status': 'fail', 'message': 'Failed to generate token'}, status=500)
+                return JsonResponse({'status': 'fail', 'message': 'Failed to generate token', 'status_code': 500}, status=500)
 
         except User.DoesNotExist:
-            return JsonResponse({'status': 'fail', 'message': 'Account not found with this email'}, status=400)
+            return JsonResponse({'status': 'fail', 'message': 'Account not found with this email', 'status_code': 404}, status=404)
         except Exception as e:
-            return JsonResponse({'status': 'fail', 'message': f'Error: {str(e)}'}, status=500)
+            return JsonResponse({'status': 'fail', 'message': f'Error: {str(e)}', 'status_code': 500}, status=500)
 
 
 #  user details api
@@ -60,18 +60,18 @@ class UserDetailAPIView(View):
         try:
             user_id = request.session.get('user_id')
             if not user_id:
-                return JsonResponse({'status': 'fail', 'message': 'User session not found'}, status=400)
+                return JsonResponse({'status': 'fail', 'message': 'User session not found', 'status_code': 400}, status=400)
             
             user_data = User.objects.get(id=user_id)
             data = {
                 'fullname': user_data.fname,
                 'email': user_data.email,
             }
-            return JsonResponse({'status': 'success', 'message': 'Details fetched', 'data': data}, status=200)
+            return JsonResponse({'status': 'success', 'message': 'Details fetched', 'data': data, 'status_code': 200}, status=200)
         except User.DoesNotExist:
-            return JsonResponse({'status': 'fail', 'message': 'User not found'}, status=404)
+            return JsonResponse({'status': 'fail', 'message': 'User not found', 'status_code': 404}, status=404)
         except Exception as e:
-            return JsonResponse({'status': 'fail', 'message': f'Something went wrong. Error: {str(e)}'}, status=500)
+            return JsonResponse({'status': 'fail', 'message': f'Something went wrong. Error: {str(e)}', 'status_code': 500}, status=500)
 
 
 # signup view
@@ -82,13 +82,13 @@ class UserSignupAPIView(View):
         try:
             data = json.loads(request.body)
         except json.JSONDecodeError:
-            return JsonResponse({'status': 'fail', 'message': 'Invalid JSON data in request body'}, status=400)
+            return JsonResponse({'status': 'fail', 'message': 'Invalid JSON data in request body', 'status_code': 400}, status=400)
 
         # Validate payload fields
         required_fields = ['email', 'fullname', 'password']
         for field in required_fields:
             if field not in data:
-                return JsonResponse({'status': 'fail', 'message': f'Missing required field: {field}'}, status=400)
+                return JsonResponse({'status': 'fail', 'message': f'Missing required field: {field}', 'status_code': 400}, status=400)
 
         email = data['email']
         fullname = data['fullname']
@@ -97,18 +97,18 @@ class UserSignupAPIView(View):
         try:
             # Check if email already exists
             if User.objects.filter(email=email).exists():
-                return JsonResponse({'status': 'fail', 'message': 'Email already exists'}, status=400)
+                return JsonResponse({'status': 'fail', 'message': 'Email already exists', 'status_code': 400}, status=400)
             else:
                 #Save new user to database
                 acc = User(email=email, fname=fullname, password=make_password(password))
                 acc.full_clean()  
                 acc.save()
                 
-            return JsonResponse({'status': 'success', 'message': 'Account created'}, status=200)
+            return JsonResponse({'status': 'success', 'message': 'Account created', 'status_code': 200}, status=200)
         except ValidationError as e:
-            return JsonResponse({'status': 'fail', 'message': e.message_dict}, status=400)
+            return JsonResponse({'status': 'fail', 'message': e.message_dict, 'status_code': 400}, status=400)
         except Exception as e:
-            return JsonResponse({'status': 'fail', 'message': str(e)}, status=500)
+            return JsonResponse({'status': 'fail', 'message': str(e), 'status_code': 500}, status=500)
 
 
 # File upload API
@@ -122,13 +122,13 @@ class FileUploadAPIView(APIView):
             
             # Ensure 'file' key is present in request.FILES
             if 'file' not in request.FILES:
-                return JsonResponse({'error': 'No file found in request'}, status=400)
+                return JsonResponse({'status': 'fail', 'message': 'No file found in request', 'status_code': 400}, status=400)
 
             # Get the uploaded file object
             uploaded_file = request.FILES['file']
             
             if "video" not in uploaded_file.content_type:
-                return JsonResponse({'error': 'Only video files are allowed'}, status=400)
+                return JsonResponse({'status': 'fail', 'message':'Only video files are allowed', 'status_code': 400}, status=400)
 
             filename = uploaded_file.name
             file_content = uploaded_file.read()
@@ -164,7 +164,7 @@ class FileUploadAPIView(APIView):
             try:
                 convert_task = convert_video_to_mp4.delay(file_path, user_id, int(obj.id), file_extension)
             except:
-                return JsonResponse({'error': 'Please Upload valid video file'}, status=400)
+                return JsonResponse({'status': 'fail', 'message': 'Please Upload valid video file', 'status_code': 400}, status=400)
 
             # Return success response with file details
             return JsonResponse({
@@ -174,11 +174,8 @@ class FileUploadAPIView(APIView):
                 'status': 'conversion started'
             })  
 
-
-            # Return success response with file details
-            return JsonResponse({'data': 'Uploaded Successfully', 'existingPath': file_name})  
         except Exception as e:
-            return JsonResponse({'status': 'fail', 'message': f'Failed to upload file. Error: {str(e)}'}, status=500)
+            return JsonResponse({'status': 'fail', 'message': f'Failed to upload file. Error: {str(e)}', 'status_code': 500}, status=500)
         
 
 # For searching converted files 
@@ -191,7 +188,7 @@ class FileSearchAPIView(APIView):
         print(video_name)
 
         if not user_id:
-            return JsonResponse({'error': 'User not authenticated'}, status=401)
+            return JsonResponse({'status': 'fail', 'message': 'User not authenticated', 'status_code': 401}, status=401)
 
         query = """
             SELECT cf.uploaded_file_id, cf.file_location, fm.video_name, fm.video_size, fm.content_type 
@@ -230,7 +227,7 @@ class FileSearchAPIView(APIView):
             for row in rows
         ]
 
-        return JsonResponse({'results': results}, status=200)
+        return JsonResponse({'status': 'fail', 'results': results,  'status_code': 200}, status=200)
 
 # List of all the files which have converted to mp4 for user
 class ConvertedFilesListAPIView(APIView):
@@ -272,8 +269,8 @@ class LogoutView(APIView):
             # Attempt to delete the token from the database
             token = Token.objects.get(unique_token=token_value)
             token.delete()
-            return JsonResponse({'message': 'Logout successful.'}, status=200)
+            return JsonResponse({'message': 'Logout successful', 'status_code': 200}, status=200)
         except Token.DoesNotExist:
-            return JsonResponse({'error': 'Token not found.'}, status=404)
+            return JsonResponse({'message': 'Token not found', 'status_code': 404}, status=404)
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
+            return JsonResponse({'message': str(e), 'status_code': 500}, status=404)
