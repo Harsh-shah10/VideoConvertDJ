@@ -10,7 +10,7 @@ class TokenMiddleware:
 
     def __call__(self, request):
         # Check if the request path is excluded from token check
-        EXCLUDE_FROM_TOKEN_CHECK = ['/account/signup/','/account/login/']
+        EXCLUDE_FROM_TOKEN_CHECK = ['/account/signup/','/account/login/', '/account/logout/']
         if request.path in EXCLUDE_FROM_TOKEN_CHECK:
             return self.get_response(request)
 

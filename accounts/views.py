@@ -73,6 +73,7 @@ class UserDetailAPIView(View):
         except Exception as e:
             return JsonResponse({'status': 'fail', 'message': f'Something went wrong. Error: {str(e)}'}, status=500)
 
+
 # signup view
 @method_decorator(csrf_exempt, name='dispatch')
 class UserSignupAPIView(View):
@@ -126,9 +127,8 @@ class FileUploadAPIView(APIView):
             # Get the uploaded file object
             uploaded_file = request.FILES['file']
             
-            # allowed_types = ['video'] 
-            # if uploaded_file.content_type not in allowed_types:
-            #     return JsonResponse({'error': 'Only video files are allowed'}, status=400)
+            if "video" not in uploaded_file.content_type:
+                return JsonResponse({'error': 'Only video files are allowed'}, status=400)
 
             filename = uploaded_file.name
             file_content = uploaded_file.read()
@@ -232,9 +232,7 @@ class FileSearchAPIView(APIView):
 
         return JsonResponse({'results': results}, status=200)
 
-
-
-
+# List of all the files which have converted to mp4 for user
 class ConvertedFilesListAPIView(APIView):
 
     def get(self, request, *args, **kwargs):
@@ -262,3 +260,20 @@ class ConvertedFilesListAPIView(APIView):
         ]
 
         return JsonResponse({'results': results}, status=200)
+    
+
+# logout user
+class LogoutView(APIView):
+    
+    def post(self, request, *args, **kwargs):
+        token_value = request.data.get('logout_token')
+
+        try:
+            # Attempt to delete the token from the database
+            token = Token.objects.get(unique_token=token_value)
+            token.delete()
+            return JsonResponse({'message': 'Logout successful.'}, status=200)
+        except Token.DoesNotExist:
+            return JsonResponse({'error': 'Token not found.'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
