@@ -4,6 +4,8 @@ from django.conf import settings
 
 def generate_login_token(user_id):
     try:
+        Token.objects.filter(user_id=user_id).delete()
+        
         login_token = Token()
 
         import jwt
