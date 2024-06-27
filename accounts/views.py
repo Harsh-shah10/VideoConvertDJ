@@ -264,13 +264,15 @@ class LogoutView(APIView):
     
     def post(self, request, *args, **kwargs):
         token_value = request.data.get('logout_token')
+        if not token_value:
+            return JsonResponse({'status': 'fail', 'message': 'Pass valid token', 'status_code': 400}, status=400)
 
         try:
             # Attempt to delete the token from the database
             token = Token.objects.get(unique_token=token_value)
             token.delete()
-            return JsonResponse({'message': 'Logout successful', 'status_code': 200}, status=200)
+            return JsonResponse({'status': 'success', 'message': 'Logout successful', 'status_code': 200}, status=200)
         except Token.DoesNotExist:
             return JsonResponse({'message': 'Token not found', 'status_code': 404}, status=404)
         except Exception as e:
-            return JsonResponse({'message': str(e), 'status_code': 500}, status=404)
+            return JsonResponse({'status': 'fail', 'message': str(e), 'status_code': 500}, status=404)
