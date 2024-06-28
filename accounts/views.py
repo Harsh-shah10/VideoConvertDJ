@@ -135,7 +135,7 @@ class FileUploadAPIView(APIView):
 
             random_prefix = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
 
-            file_name = f"{random_prefix}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_{filename}"
+            file_name = f"{random_prefix}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_{filename.replace('/', '')}"
 
             # Construct the file path within MEDIA_ROOT
             file_path = os.path.join(settings.MEDIA_ROOT, f'users/', file_name)
