@@ -1,44 +1,45 @@
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    fname VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL,
-    password VARCHAR(255) NOT NULL,
+    fname VARCHAR(255),
+    email VARCHAR(255),
+    password VARCHAR(255),
     account_status VARCHAR(255) DEFAULT 'Active',
-    CONSTRAINT valid_account_status CHECK (account_status IN ('Active', 'Inactive'))
+    CHECK (account_status IN ('Active', 'Inactive'))
 );
+
 
 CREATE TABLE token (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL,
-    unique_token VARCHAR(255) NOT NULL,
+    user_id INTEGER,
+    unique_token VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    expiry TIMESTAMP NOT NULL,
-    status VARCHAR(8) NOT NULL,
-    CONSTRAINT valid_token_status CHECK (status IN ('Active', 'Inactive'))
+    expiry TIMESTAMP,
+    status VARCHAR(8),
+    CHECK (status IN ('Active', 'Inactive'))
 );
-
 
 CREATE TABLE uploaded_files (
     id SERIAL PRIMARY KEY,
-    file_location VARCHAR(255) NOT NULL,
-    uploaded_by_id INTEGER NOT NULL,
+    file_location VARCHAR(255),
+    uploaded_by_id INTEGER,
     uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+
 CREATE TABLE converted_files (
     id SERIAL PRIMARY KEY,
-    uploaded_file_id INTEGER NOT NULL,
-    file_location VARCHAR(255) NOT NULL,
-    converted_by INTEGER NOT NULL,
+    uploaded_file_id INTEGER,
+    file_location VARCHAR(255),
+    converted_by INTEGER,
     converted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE file_metadata (
     id SERIAL PRIMARY KEY,
-    uploaded_file_id INTEGER NOT NULL,
-    video_name VARCHAR(255) NOT NULL,
-    video_size INTEGER NOT NULL,
-    content_type VARCHAR(100) NOT NULL,
-    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    converted_by INTEGER NOT NULL,
+    uploaded_file_id INTEGER,
+    video_name VARCHAR(255),
+    video_size INTEGER,
+    content_type VARCHAR(100),
+    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INTEGER
 );

@@ -106,7 +106,7 @@ DATABASES = {
         'USER':'root',
         'PASSWORD':'password',
         'HOST':'mysql.video',
-        'PORT':'3306', 
+        'PORT':'3307', 
     }
 }
 
@@ -157,7 +157,7 @@ MEDIA_URL = '/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Docker config
-CELERY_BROKER_URL = 'redis://redis.video:6379/0'
+CELERY_BROKER_URL = 'redis://redis.video:6380/0'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'

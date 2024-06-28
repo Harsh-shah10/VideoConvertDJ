@@ -32,7 +32,7 @@ services:
         image: redis:6.0-alpine
         container_name: redis.video
         ports:
-        - 6379:6379
+        - 6380:6379
 
     mysql:
         # image:  
@@ -42,7 +42,7 @@ services:
           MYSQL_ROOT_PASSWORD: password
           MYSQL_DATABASE: video
         ports:
-          - 3306:3306
+          - 3307:3306
         volumes:
           - mysql-container-data:/var/lib/mysql
 

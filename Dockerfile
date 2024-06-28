@@ -41,6 +41,6 @@ RUN chmod +x /app/project-video/docker/backend/entry-point/server-entrypoint.sh
 
 # Expose port
 EXPOSE 8000
-EXPOSE 6379
-EXPOSE 3306
+EXPOSE 6380
+EXPOSE 3307
 
