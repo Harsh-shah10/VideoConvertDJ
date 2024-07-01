@@ -1,3 +1,2 @@
-Note :
+Note : By default, I have stopped the table migration from manage.py because I have already created a database and its tables. After running Docker, you need to go inside the MySQL Docker container and execute the queries from the provided queries file. Once this is done, you can use the APIs as intended. To turn off automatic migrations and use normal migrations, modify the Meta class of the model by setting the managed attribute to False.
 
-BY default I have stopped the table migration from manage.py as I am onsodering I have created a db and its table by default after running docket u need to go inside mysql docker image and run those queries from queries file I providede then you can use those api's to turn off and use normal migrations modify the class meta method by turning of manged attriaute
