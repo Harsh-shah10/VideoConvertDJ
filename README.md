@@ -14,13 +14,12 @@ This command builds the Docker images and starts the containers in detached mode
 3. Check Running Containers
 Verify that the containers are running using the docker ps command.
 
-
 docker ps
 You should see output similar to this:
 
-sh
-Copy code
+
 CONTAINER ID   IMAGE          COMMAND                  CREATED          STATUS          PORTS                    NAMES
+
 123456789abc   my_django_app  "docker-entrypoint.s…"   10 minutes ago   Up 10 minutes   0.0.0.0:8000->8000/tcp   my_django_app_container
 
 4. Run APIs using Postman
