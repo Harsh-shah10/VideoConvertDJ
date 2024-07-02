@@ -1,31 +1,38 @@
-Follow these steps to set up and run the project on your local machine.
+# VideoConvertDJ Project Setup Guide
 
-1. Clone the Repository
-First, clone the repository to your local machine using Git.
+- **Clone the Repository:**
+  - First, clone the repository to your local machine using Git:
+    ```bash
+    git clone https://github.com/Harsh-shah10/VideoConvertDJ.git
+    ```
 
-git clone https://github.com/Harsh-shah10/VideoConvertDJ.git
+- **Build and Run the Docker Containers:**
+  - Next, use Docker Compose to build and run the Docker containers:
+    ```bash
+    docker-compose up -d
+    ```
+  - This command builds the Docker images and starts the containers in detached mode (`-d`).
 
-2. Build and Run the Docker Containers
-Next, use Docker Compose to build and run the Docker containers.
+- **Verify Running Containers:**
+  - To verify that the containers are running, use the following command:
+    ```bash
+    docker ps
+    ```
+  - You should see output similar to this:
+    ```
+    CONTAINER ID   IMAGE          COMMAND                  CREATED          STATUS          PORTS                    NAMES
+    123456789abc   my_django_app  "docker-entrypoint.s…"   10 minutes ago   Up 10 minutes   0.0.0.0:8000->8000/tcp   my_django_app_container
+    ```
 
-docker-compose up -d
-This command builds the Docker images and starts the containers in detached mode.
+- **Run APIs using Postman:**
+  - To interact with the APIs, follow these steps:
+    - Import the provided Postman collection from the repository.
+    - Open Postman and update the request URLs in the collection:
+      - Replace `localhost` with `0.0.0.0` and ensure the correct port is used (e.g., `8000`).
+      - Example: Change `http://localhost:8000/api/endpoint` to `http://0.0.0.0:8000/api/endpoint`.
 
-3. Check Running Containers
-Verify that the containers are running using the docker ps command.
+- **Additional Notes:**
+  - Ensure Docker and Docker Compose are installed on your machine before proceeding.
+  - Modify any configuration files (`docker-compose.yml`, etc.) according to your environment if needed.
 
-docker ps
-You should see output similar to this:
-
-
-CONTAINER ID   IMAGE          COMMAND                  CREATED          STATUS          PORTS                    NAMES
-
-123456789abc   my_django_app  "docker-entrypoint.s…"   10 minutes ago   Up 10 minutes   0.0.0.0:8000->8000/tcp   my_django_app_container
-
-4. Run APIs using Postman
-Use Postman to run all the APIs.
-
-Import the Postman collection provided in the repository.
-Replace the URL in the Postman requests with 0.0.0.0 and the appropriate port (e.g., 8000).
-For example, if the original URL in the Postman collection is http://localhost:8000/api/endpoint, change it to http://0.0.0.0:8000/api/endpoint.
-
+That's it! You should now have the VideoConvertDJ project up and running locally.
