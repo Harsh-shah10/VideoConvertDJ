@@ -18,7 +18,7 @@ class User(models.Model):
     
     class Meta:
         db_table = 'users'
-        managed = False  
+        #managed = False  
         
         
 # For token creation 
@@ -36,7 +36,7 @@ class Token(models.Model):
     
     class Meta:
         db_table = 'token'
-        managed = False  
+        #managed = False  
     
     
 class UploadedFile(models.Model):
@@ -46,7 +46,7 @@ class UploadedFile(models.Model):
 
     class Meta:
         db_table = 'uploaded_files'
-        managed = False  
+        #managed = False  
         
 class ConvertedVideo(models.Model):
     uploaded_file_id = models.IntegerField() # FK of Uploaded file
@@ -56,7 +56,7 @@ class ConvertedVideo(models.Model):
 
     class Meta:
         db_table = 'converted_files'
-        managed = False  
+        #managed = False  
     
 
 class FileMetaData(models.Model):
@@ -69,7 +69,7 @@ class FileMetaData(models.Model):
 
     class Meta:
         db_table = 'file_metadata'
-        managed = False  
+        #managed = False  
         
     
     
