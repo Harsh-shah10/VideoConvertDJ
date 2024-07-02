@@ -34,7 +34,8 @@ WORKDIR /app/project-video/
 
 RUN pip install -r requirements.txt 
 
-
+# Make migrations
+RUN python manage.py makemigrations
 
 RUN chmod +x /app/project-video/docker/backend/entry-point/server-entrypoint.sh
 
