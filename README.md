@@ -3,23 +3,18 @@ Follow these steps to set up and run the project on your local machine.
 1. Clone the Repository
 First, clone the repository to your local machine using Git.
 
-sh
-Copy code
 git clone https://github.com/Harsh-shah10/VideoConvertDJ.git
 
 2. Build and Run the Docker Containers
 Next, use Docker Compose to build and run the Docker containers.
 
-sh
-Copy code
 docker-compose up -d
 This command builds the Docker images and starts the containers in detached mode.
 
 3. Check Running Containers
 Verify that the containers are running using the docker ps command.
 
-sh
-Copy code
+
 docker ps
 You should see output similar to this:
 
