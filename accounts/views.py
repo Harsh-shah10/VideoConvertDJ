@@ -18,11 +18,27 @@ from .models import UploadedFile, ConvertedVideo, FileMetaData
 from django.db import connection
 import random
 import string
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework.parsers import MultiPartParser, FormParser
 # Create your views here.
 
 # login view
 @method_decorator(csrf_exempt, name='dispatch')
-class UserLoginAPIView(View):
+class UserLoginAPIView(APIView):
+    @swagger_auto_schema(
+        operation_id='user_login',
+        operation_summary="User Login.",   
+
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['email', 'password'],
+            properties={
+                'email': openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_EMAIL),
+                'password': openapi.Schema(type=openapi.TYPE_STRING),
+            },
+        )
+    )
 
     def post(self, request, *args, **kwargs):
         try:
@@ -54,8 +70,23 @@ class UserLoginAPIView(View):
 
 #  user details api
 @method_decorator(csrf_exempt, name='dispatch')
-class UserDetailAPIView(View):
-    
+class UserDetailAPIView(APIView):
+    @swagger_auto_schema(
+        operation_id='view_user_details',
+        operation_summary="Fetch User Details.",   
+
+        manual_parameters=[
+            openapi.Parameter(
+                name='token',
+                in_=openapi.IN_HEADER,
+                type=openapi.TYPE_STRING,
+                description='Bearer token',
+                required=True,
+                default='Q5vwu24-vN9Y-aPf6F8LZPXMPido0pugBy4ZkXzWxdo',
+            ),
+        ]
+    )
+
     def get(self, request, *args, **kwargs):
         try:
             user_id = request.session.get('user_id')
@@ -76,7 +107,21 @@ class UserDetailAPIView(View):
 
 # signup view
 @method_decorator(csrf_exempt, name='dispatch')
-class UserSignupAPIView(View):
+class UserSignupAPIView(APIView):
+    @swagger_auto_schema(
+        operation_id='create_account',
+        operation_summary="Create a new account.",        
+        
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['fullname', 'email', 'password'],
+            properties={
+                'fullname': openapi.Schema(type=openapi.TYPE_STRING),
+                'email': openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_EMAIL),
+                'password': openapi.Schema(type=openapi.TYPE_STRING),
+            },
+        )
+    )
     
     def post(self, request, *args, **kwargs):
         try:
@@ -114,7 +159,28 @@ class UserSignupAPIView(View):
 # File upload API
 @method_decorator(csrf_exempt, name='dispatch')
 class FileUploadAPIView(APIView):
-    
+    parser_classes = (FormParser, MultiPartParser)
+
+    @swagger_auto_schema(
+        operation_id='upload_file',
+        operation_summary="Uploads a file.",
+
+        consumes=['multipart/form-data'],
+        responses={
+            200: 'File uploaded successfully.',
+            400: 'Bad Request. No file found in request or invalid file type.'
+        },
+        manual_parameters=[
+            openapi.Parameter(
+                name='additional_param',
+                in_=openapi.IN_FORM,
+                type=openapi.TYPE_STRING,
+                required=False,
+                description='Additional parameter for file upload (optional).'
+            ),
+        ]
+    )
+
     def put(self, request, *args, **kwargs):
         try:
             user_id = request.session.get('user_id')        
@@ -180,6 +246,36 @@ class FileUploadAPIView(APIView):
 
 # For searching converted files 
 class FileSearchAPIView(APIView):
+    @swagger_auto_schema(
+        operation_id='search_files',
+        operation_summary="Search Files.",   
+
+        manual_parameters=[
+            openapi.Parameter(
+                name='token',
+                in_=openapi.IN_HEADER,
+                type=openapi.TYPE_STRING,
+                description='Bearer token',
+                required=True,
+                default='Q5vwu24-vN9Y-aPf6F8LZPXMPido0pugBy4ZkXzWxdo',
+            ),
+            openapi.Parameter(
+                name='video_name',
+                in_=openapi.IN_QUERY,
+                type=openapi.TYPE_STRING,
+                required=False,
+                description='Name of the video file (e.g., avi)',
+            ),
+            openapi.Parameter(
+                name='size',
+                in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                required=False,
+                description='Size of the video file in bytes (optional)',
+            ),
+        ]
+    )
+
     def get(self, request, *args, **kwargs):
         size = request.GET.get('size', None)
         video_name = request.GET.get('video_name', None)
@@ -231,6 +327,21 @@ class FileSearchAPIView(APIView):
 
 # List of all the files which have converted to mp4 for user
 class ConvertedFilesListAPIView(APIView):
+    @swagger_auto_schema(
+        operation_id='list_converted_files',
+        operation_summary="List Converted Files.",   
+
+        manual_parameters=[
+            openapi.Parameter(
+                name='token',
+                in_=openapi.IN_HEADER,
+                type=openapi.TYPE_STRING,
+                description='Bearer token',
+                required=True,
+                default='Q5vwu24-vN9Y-aPf6F8LZPXMPido0pugBy4ZkXzWxdo',
+            ),
+        ]
+    )
 
     def get(self, request, *args, **kwargs):
         user_id = request.session.get('user_id')
@@ -261,7 +372,18 @@ class ConvertedFilesListAPIView(APIView):
 
 # logout user
 class LogoutView(APIView):
-    
+    @swagger_auto_schema(
+        operation_id='logout_users',
+        operation_summary="Logout Users.",   
+
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['logout_token'],
+            properties={
+                'logout_token': openapi.Schema(type=openapi.TYPE_STRING),
+            },
+        )
+    )
     def post(self, request, *args, **kwargs):
         token_value = request.data.get('logout_token')
         if not token_value:

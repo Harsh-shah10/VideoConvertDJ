@@ -10,8 +10,8 @@ class TokenMiddleware:
 
     def __call__(self, request):
         # Check if the request path is excluded from token check
-        EXCLUDE_FROM_TOKEN_CHECK = ['/account/signup/','/account/login/', '/account/logout/']
-        if request.path in EXCLUDE_FROM_TOKEN_CHECK:
+        EXCLUDE_FROM_TOKEN_CHECK = ['/account/signup/','/account/login/', '/account/logout/', '/favicon.ico']
+        if request.path in EXCLUDE_FROM_TOKEN_CHECK or (request.path.startswith('/swagger')):
             return self.get_response(request)
 
         auth_header = request.headers.get('token')

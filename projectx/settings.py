@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'accounts',
+
+    'drf_yasg', # For swagger api
 ]
 
 MIDDLEWARE = [
@@ -172,3 +174,7 @@ CELERY_TIMEZONE = 'Asia/Karachi'
 # CELERY_TASK_SERIALIZER = 'json'
 # CELERY_RESULT_BACKEND = result_backend
 # CELERY_TIMEZONE = 'Asia/Karachi'
+
+SPECTACULAR_SETTINGS = {
+    'COMPONENT_SPLIT_REQUEST': True
+}
